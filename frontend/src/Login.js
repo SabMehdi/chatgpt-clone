@@ -31,7 +31,7 @@ const navigate = useNavigate();
                 localStorage.setItem('username', username);
                 setAuth({
                     isAuthenticated: true,
-                    username: data.username,
+                    username: username,
                   });
                 navigate('/');
             } else {

@@ -19,8 +19,8 @@ function App() {
           <Route path="/register" element={<Register />} />
         </Routes>
       </BrowserRouter>
-      </AuthProvider>
-      );
+    </AuthProvider>
+  );
 }
 
-      export default App;
+export default App;

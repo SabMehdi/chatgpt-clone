@@ -6,7 +6,6 @@ import { useAuth } from './AuthContext'; // Import useAuth
 function Navbar() {
   const { auth, setAuth } = useAuth();
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
   const navigate = useNavigate();
 
@@ -14,9 +13,12 @@ function Navbar() {
     // Check for token or authentication credentials
     const token = localStorage.getItem('token');
     const storedUsername = localStorage.getItem('username'); // Retrieve the username from local storage
-    setIsAuthenticated(!!token);
+    console.log('token', username); 
+    console.log(auth.isAuthenticated);
     if (storedUsername) {
       setUsername(storedUsername);
+      setAuth({ isAuthenticated: true, username: storedUsername });
+
     }
   }, []);
 
@@ -24,7 +26,6 @@ function Navbar() {
     // Clear the token, username or credentials from local storage (or state management)
     localStorage.removeItem('token');
     localStorage.removeItem('username');
-    setIsAuthenticated(false);
     setUsername('');
     setAuth({ isAuthenticated: false, username: '' });
 
@@ -70,7 +71,7 @@ function Navbar() {
           ) : (
             <Dropdown>
               <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                Hello, {username}
+                Hello, {auth.username}
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
