@@ -1,38 +1,52 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Chat() {
-  const [message, setMessage] = useState('');
-  const [conversation, setConversation] = useState([]);
+    const [messages, setMessages] = useState([]);
+    const [inputText, setInputText] = useState("");
 
-  const sendMessage = async () => {
-    try {
-      const response = await axios.post('http://localhost:3000/chat', { message });
-      setConversation([...conversation, { message, response: response.data }]);
-      setMessage('');
-    } catch (error) {
-      console.error('Error sending message:', error);
+    const handleSend = () => {
+        if (inputText !== "") {
+            setMessages([...messages, inputText]);
+            setInputText("");
+        }
     }
-  };
 
-  return (
-    <div>
-      <h1>Chat with GPT-3</h1>
-      {conversation.map((exchange, index) => (
-        <div key={index}>
-          <p>User: {exchange.message}</p>
-          <p>GPT-3: {exchange.response}</p>
+    return (
+        <div className="container py-5">
+            <div className="row">
+                <div className="col-md-6 offset-md-3">
+                    <div className="card">
+                        <div className="card-body">
+                            <div className="chat-box bg-light" style={{ height: '400px', overflowY: 'scroll' }}>
+                                {messages.map((msg, index) => (
+                                    <div key={index} className="p-2 mb-2 bg-secondary text-white rounded">
+                                        {msg}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="card-footer">
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                placeholder="Type a message..." 
+                                value={inputText}
+                                onChange={(e) => setInputText(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                            />
+                            <button 
+                                className="btn btn-primary mt-3" 
+                                onClick={handleSend}
+                            >
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      ))}
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-      />
-      <button onClick={sendMessage}>Send</button>
-    </div>
-  );
+    );
 }
 
 export default Chat;

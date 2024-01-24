@@ -1,38 +1,26 @@
-import React, { useState } from 'react';
-import axios from 'axios';
 
-function Chat() {
-  const [message, setMessage] = useState('');
-  const [conversation, setConversation] = useState([]);
-
-  const sendMessage = async () => {
-    try {
-      const response = await axios.post('http://localhost:3000/chat', { message });
-      setConversation([...conversation, { message, response: response.data }]);
-      setMessage('');
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
-  };
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Chat from './chat';
+import Register from './Register';
+import Login from './Login';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Navbar from './Navbar';
+import { AuthProvider } from './AuthContext';
+function App() {
 
   return (
-    <div>
-      <h1>Chat with GPT-3</h1>
-      {conversation.map((exchange, index) => (
-        <div key={index}>
-          <p>User: {exchange.message}</p>
-          <p>GPT-3: {exchange.response}</p>
-        </div>
-      ))}
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-      />
-      <button onClick={sendMessage}>Send</button>
-    </div>
-  );
+    <AuthProvider>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Chat />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </BrowserRouter>
+      </AuthProvider>
+      );
 }
 
-export default Chat;
+      export default App;
