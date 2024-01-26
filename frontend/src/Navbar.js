@@ -22,6 +22,7 @@ function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    localStorage.removeItem('userId');
     setUsername('');
     setAuth({ isAuthenticated: false, username: '' });
 

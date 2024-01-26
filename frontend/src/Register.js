@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useAuth } from './AuthContext'; // Import useAuth
 
 function Register() {
     const [username, setUsername] = useState('');
@@ -8,6 +9,7 @@ function Register() {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const navigate = useNavigate();
+    const { setAuth } = useAuth();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -30,10 +32,14 @@ function Register() {
                 setSuccessMessage('Registration successful. You can now log in.');
                 // Optionally redirect the user to the login page or clear the form
                 // In your login or register handler
-                localStorage.setItem('username', 'username');
-
+                localStorage.setItem('username', username);
+                localStorage.setItem('userId', data.userId);
                 localStorage.setItem('token', data.token);
 
+                setAuth({
+                    isAuthenticated: true,
+                    username: username,
+                });
                 navigate('/');
             } else {
                 setErrorMessage(data.message || 'Registration failed');

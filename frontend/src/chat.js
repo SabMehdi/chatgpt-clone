@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Chat() {
     const [messages, setMessages] = useState([]);
     const [inputText, setInputText] = useState("");
+    const userId = localStorage.getItem('userId'); // Replace with actual logic to get current user's ID
+    useEffect(() => {
+        // Fetch chat history when the component mounts
+        axios.get(`http://localhost:3000/chat/${userId}`)
+            .then(response => {
+                setMessages(response.data.map(msg => ({
+                    text: msg.content,
+                    sender: msg.sender === userId ? 'user' : 'ai'
+                })));
+            })
+            .catch(error => console.error('Error fetching chat history:', error));
+    }, [userId]);
 
     const handleSend = async () => {
         if (inputText !== "") {
@@ -13,16 +25,15 @@ function Chat() {
             setInputText("");
 
             try {
-                const response = await axios.post('http://localhost:3000/chat', { message: userMessage });
-                const aiMessage = response.data.response; // Updated line
-                console.log('Received response:', response.data); // Updated log
+                const response = await axios.post('http://localhost:3000/chat', { message: userMessage, userId });
+                const aiMessage = response.data.response;
+                console.log('Received response:', response.data);
                 setMessages(messages => [...messages, { text: aiMessage, sender: 'ai' }]);
             } catch (error) {
                 console.error('Error sending message:', error);
             }
         }
     }
-
     return (
         <div className="container py-5">
             <div className="row">

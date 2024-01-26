@@ -21,7 +21,7 @@ router.post('/register', async (req, res) => {
         // Optionally, create and send a token
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        res.status(201).json({ token });
+        res.status(201).json({ token, userId: user._id });
     } catch (error) {
         res.status(500).json({ message: 'Error registering new user', error: error.message });
     }
@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        res.json({ token });
+        res.json({ token, userId: user._id });
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error: error.message });
     }

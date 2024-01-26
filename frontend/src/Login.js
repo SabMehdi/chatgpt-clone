@@ -8,7 +8,7 @@ function Login() {
     const [errorMessage, setErrorMessage] = useState('');
     const { setAuth } = useAuth();
 
-const navigate = useNavigate();
+    const navigate = useNavigate();
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -25,14 +25,16 @@ const navigate = useNavigate();
 
             if (response.status === 200) {
                 console.log('Login successful:', data);
+
                 // Here, you might want to store the received token in localStorage or context
                 localStorage.setItem('token', data.token);
                 // In your login or register handler
                 localStorage.setItem('username', username);
+                localStorage.setItem('userId', data.userId);
                 setAuth({
                     isAuthenticated: true,
                     username: username,
-                  });
+                });
                 navigate('/');
             } else {
                 // Handle errors, such as displaying a message to the user
