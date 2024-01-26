@@ -34,15 +34,18 @@ app.use('/api', authRoutes);
 
 app.post('/chat', async (req, res) => {
   const { message } = req.body;
-  console.log('Received request:', req.body); // Log the request body
+  console.log('Received request:', req.body);
 
   try {
-    /* const response = await openai.chat.completions.create({
+    console.log('Sending request to OpenAI API...', message);
+
+    // Create a chat completion request to OpenAI
+    const response = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
         {
           "role": "user",
-          "content": message // Use the 'message' from the request body as the user's input
+          "content": message
         }
       ],
       temperature: 1,
@@ -50,10 +53,21 @@ app.post('/chat', async (req, res) => {
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,
+      stream: false
     });
- */
-    res.json({ message: 'Static response' });
-    console.log(res);
+    console.log("OpenAI API Response:", response);
+
+    if (response && response.choices && response.choices.length > 0 && response.choices[0].message) {
+      const aiResponse = response.choices[0].message.content; // Correctly access the content
+      console.log('Received response from OpenAI API:', aiResponse);
+      res.json({ response: aiResponse });
+    } else {
+      
+      console.error('Unexpected response format:', response);
+      res.status(500).json({
+        message: 'Unexpected response format from OpenAI API'
+      });
+    }
   } catch (error) {
     console.error('Error with OpenAI API:', error);
     res.status(500).json({

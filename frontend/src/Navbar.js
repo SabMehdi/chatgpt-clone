@@ -10,11 +10,8 @@ function Navbar() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for token or authentication credentials
     const token = localStorage.getItem('token');
-    const storedUsername = localStorage.getItem('username'); // Retrieve the username from local storage
-    console.log('token', username); 
-    console.log(auth.isAuthenticated);
+    const storedUsername = localStorage.getItem('username'); 
     if (storedUsername) {
       setUsername(storedUsername);
       setAuth({ isAuthenticated: true, username: storedUsername });
@@ -23,13 +20,12 @@ function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    // Clear the token, username or credentials from local storage (or state management)
     localStorage.removeItem('token');
     localStorage.removeItem('username');
     setUsername('');
     setAuth({ isAuthenticated: false, username: '' });
 
-    navigate('/'); // Redirect to home page after logout
+    navigate('/'); 
   };
 
   return (

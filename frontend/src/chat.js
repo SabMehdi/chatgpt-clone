@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Chat() {
     const [messages, setMessages] = useState([]);
     const [inputText, setInputText] = useState("");
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (inputText !== "") {
-            setMessages([...messages, inputText]);
+            const userMessage = inputText;
+            setMessages(messages => [...messages, { text: userMessage, sender: 'user' }]);
             setInputText("");
+
+            try {
+                const response = await axios.post('http://localhost:3000/chat', { message: userMessage });
+                const aiMessage = response.data.response; // Updated line
+                console.log('Received response:', response.data); // Updated log
+                setMessages(messages => [...messages, { text: aiMessage, sender: 'ai' }]);
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
         }
     }
 
@@ -20,23 +31,23 @@ function Chat() {
                         <div className="card-body">
                             <div className="chat-box bg-light" style={{ height: '400px', overflowY: 'scroll' }}>
                                 {messages.map((msg, index) => (
-                                    <div key={index} className="p-2 mb-2 bg-secondary text-white rounded">
-                                        {msg}
+                                    <div key={index} className={`p-2 mb-2 ${msg.sender === 'user' ? 'bg-primary' : 'bg-secondary'} text-white rounded`}>
+                                        {msg.text}
                                     </div>
                                 ))}
                             </div>
                         </div>
                         <div className="card-footer">
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Type a message..." 
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Type a message..."
                                 value={inputText}
                                 onChange={(e) => setInputText(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                             />
-                            <button 
-                                className="btn btn-primary mt-3" 
+                            <button
+                                className="btn btn-primary mt-3"
                                 onClick={handleSend}
                             >
                                 Send
