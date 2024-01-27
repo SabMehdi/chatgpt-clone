@@ -41,7 +41,7 @@ app.post('/chat', async (req, res) => {
 
     // Create a chat completion request to OpenAI
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-3.5-turbo",
       messages: [{ "role": "user", "content": userMessage }],
       temperature: 1,
       max_tokens: 256,

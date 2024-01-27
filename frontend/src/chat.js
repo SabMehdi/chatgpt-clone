@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import './Chat.css';
 function Chat() {
     const [messages, setMessages] = useState([]);
     const [inputText, setInputText] = useState("");
@@ -34,43 +34,38 @@ function Chat() {
         }
     }
     return (
-        <div className="container py-5">
-            <div className="row">
-                <div className="col-md-6 offset-md-3">
-                    <div className="card">
-                        <div className="card-body">
-                        <div className="text-center mb-3">
-                                <button className="btn btn-info" onClick={loadHistory}>Load History</button>
-                            </div>
-                            <div className="chat-box bg-light" style={{ height: '400px', overflowY: 'scroll' }}>
-                                {messages.map((msg, index) => (
-                                    <div key={index} className={`p-2 mb-2 ${msg.sender === 'user' ? 'bg-primary' : 'bg-secondary'} text-white rounded`}>
-                                        {msg.text}
-                                    </div>
-                                ))}
-                            </div>
+        <div className="chat-container">
+        <div className="card">
+            <div className="card-body">
+                <div className="text-center mb-3">
+                    <button className="btn btn-info" onClick={loadHistory}>Load History</button>
+                </div>
+                <div className="chat-box">
+                    {messages.map((msg, index) => (
+                        <div key={index} className={`chat-message ${msg.sender === 'user' ? 'user' : 'ai'}`}>
+                            {msg.text}
                         </div>
-                        <div className="card-footer">
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Type a message..."
-                                value={inputText}
-                                onChange={(e) => setInputText(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                            />
-                            <button
-                                className="btn btn-primary mt-3"
-                                onClick={handleSend}
-                            >
-                                Send
-                            </button>
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </div>
+            <div className="card-footer chat-input">
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Type a message..."
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                />
+                <button
+                    className="btn btn-primary"
+                    onClick={handleSend}
+                >
+                    Send
+                </button>
+            </div>
         </div>
-    );
+    </div>
+);
 }
-
 export default Chat;
