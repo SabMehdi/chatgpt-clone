@@ -6,7 +6,9 @@ const { OpenAI } = require('openai');
 const router = express.Router();
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-router.post('/chat', async (req, res) => {
+const requireAuth = require('./requireAuth');
+
+router.post('/chat',requireAuth, async (req, res) => {
     const { message: userMessage, userId } = req.body;
 
     try {
@@ -51,7 +53,7 @@ router.post('/chat', async (req, res) => {
     }
 });
 
-router.get('/chat/history/:userId', async (req, res) => {
+router.get('/chat/history/:userId',requireAuth, async (req, res) => {
     try {
         const chatSession = await ChatSession.findOne({ user: req.params.userId })
             .populate('user', 'username')
