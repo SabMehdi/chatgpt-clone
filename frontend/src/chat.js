@@ -6,7 +6,7 @@ function Chat() {
     const [messages, setMessages] = useState([]);
     const [inputText, setInputText] = useState("");
     const userId = localStorage.getItem('userId'); // Replace with actual logic to get current user's ID
-    const port=process.env.PORT || 3000;
+    const port=process.env.REACT_APP_API_PORT || 5000;
 
     const loadHistory = () => {
         axios.get(`http://localhost:${port}/chat/history/${userId}`)

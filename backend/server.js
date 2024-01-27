@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+
 require('dotenv').config();
 const cors = require('cors');
 const axios = require('axios');
@@ -8,7 +8,7 @@ const { OpenAI } = require('openai');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const ChatSession = require('./models/Message');
-
+const PORT = process.env.PORT;
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
 app.use(express.json());

@@ -10,7 +10,7 @@ function Register() {
     const [successMessage, setSuccessMessage] = useState('');
     const navigate = useNavigate();
     const { setAuth } = useAuth();
-    const port=process.env.PORT || 3000;
+    const port=process.env.REACT_APP_API_PORT || 5000;
     const handleSubmit = async (event) => {
         event.preventDefault();
         setErrorMessage('');
