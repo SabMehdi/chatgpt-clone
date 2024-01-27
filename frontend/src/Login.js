@@ -7,13 +7,14 @@ function Login() {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const { setAuth } = useAuth();
+    const port=process.env.PORT || 3000;
 
     const navigate = useNavigate();
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:3000/api/login', {
+            const response = await fetch(`http://localhost:${port}/api/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

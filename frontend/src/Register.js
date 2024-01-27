@@ -10,14 +10,14 @@ function Register() {
     const [successMessage, setSuccessMessage] = useState('');
     const navigate = useNavigate();
     const { setAuth } = useAuth();
-
+    const port=process.env.PORT || 3000;
     const handleSubmit = async (event) => {
         event.preventDefault();
         setErrorMessage('');
         setSuccessMessage('');
 
         try {
-            const response = await fetch('http://localhost:3000/api/register', {
+            const response = await fetch(`http://localhost:${port}/api/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
