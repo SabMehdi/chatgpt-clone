@@ -26,10 +26,7 @@ function Login() {
 
             if (response.status === 200) {
                 console.log('Login successful:', data);
-
-                // Here, you might want to store the received token in localStorage or context
                 localStorage.setItem('token', data.token);
-                // In your login or register handler
                 localStorage.setItem('username', username);
                 localStorage.setItem('userId', data.userId);
                 setAuth({
@@ -38,7 +35,6 @@ function Login() {
                 });
                 navigate('/');
             } else {
-                // Handle errors, such as displaying a message to the user
                 setErrorMessage(data.message || 'Login failed');
             }
         } catch (error) {

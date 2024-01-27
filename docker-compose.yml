@@ -3,9 +3,9 @@ services:
   backend:
     image: keikenbackend
     ports:
-      - "5000:3000" # Maps port 3000 inside the container to port 5000 on your host
+      - "5000:5000" 
 
   frontend:
     image: keikenfrontend
     ports:
-      - "3000:80" # Maps port 80 inside the container to port 3000 on your host
+      - "3000:80" 

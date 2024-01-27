@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Dropdown } from 'react-bootstrap';
-import { useAuth } from './AuthContext'; // Import useAuth
+import { useAuth } from '../auth/AuthContext'; // Import useAuth
 
 function Navbar() {
   const { auth, setAuth } = useAuth();
@@ -32,7 +32,7 @@ function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/">MyApp</Link>
+        <Link className="navbar-brand" to="/">Keiken</Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -47,8 +47,8 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
-              <NavLink className="nav-link" to="/" exact activeClassName="active">
-                Home
+              <NavLink className="nav-link" to="/chat" exact activeClassName="active">
+                chat
               </NavLink>
             </li>
           </ul>

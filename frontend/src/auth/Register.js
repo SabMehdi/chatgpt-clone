@@ -30,8 +30,7 @@ function Register() {
             if (response.status === 201) {
                 console.log('Registration successful:', data);
                 setSuccessMessage('Registration successful. You can now log in.');
-                // Optionally redirect the user to the login page or clear the form
-                // In your login or register handler
+ 
                 localStorage.setItem('username', username);
                 localStorage.setItem('userId', data.userId);
                 localStorage.setItem('token', data.token);
