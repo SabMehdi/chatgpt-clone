@@ -6,9 +6,9 @@ function Chat() {
     const [messages, setMessages] = useState([]);
     const [inputText, setInputText] = useState("");
     const userId = localStorage.getItem('userId'); // Replace with actual logic to get current user's ID
-    useEffect(() => {
-        // Fetch chat history when the component mounts
-        axios.get(`http://localhost:3000/chat/${userId}`)
+
+    const loadHistory = () => {
+        axios.get(`http://localhost:3000/chat/history/${userId}`)
             .then(response => {
                 setMessages(response.data.map(msg => ({
                     text: msg.content,
@@ -16,8 +16,7 @@ function Chat() {
                 })));
             })
             .catch(error => console.error('Error fetching chat history:', error));
-    }, [userId]);
-
+    };
     const handleSend = async () => {
         if (inputText !== "") {
             const userMessage = inputText;
@@ -40,6 +39,9 @@ function Chat() {
                 <div className="col-md-6 offset-md-3">
                     <div className="card">
                         <div className="card-body">
+                        <div className="text-center mb-3">
+                                <button className="btn btn-info" onClick={loadHistory}>Load History</button>
+                            </div>
                             <div className="chat-box bg-light" style={{ height: '400px', overflowY: 'scroll' }}>
                                 {messages.map((msg, index) => (
                                     <div key={index} className={`p-2 mb-2 ${msg.sender === 'user' ? 'bg-primary' : 'bg-secondary'} text-white rounded`}>

@@ -7,7 +7,7 @@ const axios = require('axios');
 const { OpenAI } = require('openai');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
-const Message = require('./models/Message');
+const ChatSession = require('./models/Message');
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
@@ -23,18 +23,18 @@ app.listen(PORT, () => {
 });
 
 
-mongoose.connect(process.env.MONGODB_URI, { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 app.use('/api', authRoutes);
 
 
 app.post('/chat', async (req, res) => {
-  const { message: userMessage, userId } = req.body; // Include userId in the request body
+  const { message: userMessage, userId } = req.body;
 
   try {
     console.log('Sending request to OpenAI API...', userMessage);
@@ -55,15 +55,20 @@ app.post('/chat', async (req, res) => {
 
     if (response && response.choices && response.choices.length > 0 && response.choices[0].message) {
       const aiResponse = response.choices[0].message.content;
-      console.log('Received response from OpenAI API:', aiResponse);
+      let chatSession = await ChatSession.findOne({ user: userId });
+      if (!chatSession) {
+        chatSession = new ChatSession({ user: userId });
+      }
 
-      // Save user's message
-      const userMsg = new Message({ sender: userId, content: userMessage });
-      await userMsg.save();
+      // Add user's message to the session
+      chatSession.messages.push({ sender: userId, content: userMessage });
 
-      // Save AI's response
-      const aiMsg = new Message({ sender: null, content: aiResponse }); // Assuming null for AI sender
-      await aiMsg.save();
+      // Add AI's response to the session
+      if (aiResponse) {
+        chatSession.messages.push({ sender: null, content: aiResponse });
+      }
+
+      await chatSession.save();
 
       res.json({ response: aiResponse });
     } else {
@@ -76,12 +81,18 @@ app.post('/chat', async (req, res) => {
   }
 });
 
+app.get('/chat/history/:userId', async (req, res) => {
+  try {
+    const chatSession = await ChatSession.findOne({ user: req.params.userId })
+      .populate('user', 'username') // Populate user details if needed
+      .exec();
 
-// Function to save a message
-const saveMessage = async (senderId, content) => {
-  const message = new Message({
-    sender: senderId,
-    content: content
-  });
-  await message.save();
-};
+    if (!chatSession) {
+      return res.status(404).json({ message: 'No chat history found' });
+    }
+
+    res.json(chatSession.messages);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving chat history', error });
+  }
+});
