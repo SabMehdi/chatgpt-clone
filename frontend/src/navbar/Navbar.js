@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Dropdown } from 'react-bootstrap';
-import { useAuth } from '../auth/AuthContext'; 
+import { useAuth } from '../auth/AuthContext';
 
 function Navbar() {
   const { auth, setAuth } = useAuth();
@@ -11,7 +11,7 @@ function Navbar() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const storedUsername = localStorage.getItem('username'); 
+    const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
       setUsername(storedUsername);
       setAuth({ isAuthenticated: true, username: storedUsername });
@@ -26,7 +26,7 @@ function Navbar() {
     setUsername('');
     setAuth({ isAuthenticated: false, username: '' });
 
-    navigate('/'); 
+    navigate('/');
   };
 
   return (
@@ -45,15 +45,18 @@ function Navbar() {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto">
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/chat" exact activeClassName="active">
-                chat
-              </NavLink>
-            </li>
-          </ul>
+          {auth.isAuthenticated ? (
+            <ul className="navbar-nav me-auto">
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/chat" exact activeClassName="active">
+                  Chat
+                </NavLink>
+              </li>
+            </ul>
+          ) : null}
+         
           {!auth.isAuthenticated ? (
-            <ul className="navbar-nav">
+            <ul className="navbar-nav ms-auto"> {/* Use ms-auto to align to the right */}
               <li className="nav-item">
                 <NavLink className="nav-link" to="/register" activeClassName="active">
                   Register
@@ -66,7 +69,7 @@ function Navbar() {
               </li>
             </ul>
           ) : (
-            <Dropdown>
+            <Dropdown className="ms-auto"> {/* Use ms-auto for the dropdown as well */}
               <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                 Hello, {auth.username}
               </Dropdown.Toggle>
