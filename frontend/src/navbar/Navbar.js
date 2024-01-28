@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Dropdown } from 'react-bootstrap';
-import { useAuth } from '../auth/AuthContext'; // Import useAuth
+import { useAuth } from '../auth/AuthContext'; 
 
 function Navbar() {
   const { auth, setAuth } = useAuth();
