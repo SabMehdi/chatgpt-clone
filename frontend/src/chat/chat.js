@@ -7,7 +7,8 @@ function Chat() {
     const [inputText, setInputText] = useState("");
     const userId = localStorage.getItem('userId');
     const port = process.env.REACT_APP_API_PORT || 5000;
-    const token = localStorage.getItem('token'); // Replace 'token' with your actual token key
+    const token = localStorage.getItem('token');
+    const [isLoading, setIsLoading] = useState(false);
 
     const loadHistory = () => {
         axios.get(`http://localhost:${port}/api/chat/history/${userId}`, {
@@ -23,6 +24,7 @@ function Chat() {
     };
     const handleSend = async () => {
         if (inputText !== "") {
+            setIsLoading(true);
             const userMessage = inputText;
             setMessages(messages => [...messages, { text: userMessage, sender: 'user' }]);
             setInputText("");
@@ -37,16 +39,18 @@ function Chat() {
             } catch (error) {
                 console.error('Error sending message:', error);
             }
+            setIsLoading(false);
         }
     };
 
     const suggestActivity = async () => {
+        setIsLoading(true);
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
-                const weatherData = await fetchWeatherData(latitude, longitude); 
-                const Message = `What can I do in ${weatherData.location} with ${weatherData.weather} condition, ${weatherData.temperature} Degree Celsius, at ${weatherData.time}?`;
+                const weatherData = await fetchWeatherData(latitude, longitude);
+                const Message = `What can I do in ${weatherData.name}, ${weatherData.country} with ${weatherData.weather} condition, ${weatherData.temperature} Degree Celsius, at ${weatherData.time}?`;
                 sendMessage(Message);
             }, (error) => {
                 console.error('Error getting location:', error);
@@ -54,17 +58,19 @@ function Chat() {
         } else {
             console.log("Geolocation is not supported by this browser.");
         }
+        setIsLoading(false);
     };
 
     const fetchWeatherData = async (latitude, longitude) => {
-        const apiKey = 'a164573a9bee41d9ab005932242801'; 
+        const apiKey = 'a164573a9bee41d9ab005932242801';
         const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${latitude},${longitude}`;
 
         try {
             const response = await fetch(url);
             const data = await response.json();
             return {
-                location: data.location.name,
+                name: data.location.name,
+                country: data.location.country,
                 weather: data.current.condition.text,
                 temperature: data.current.temp_c,
                 time: data.location.localtime,
@@ -75,8 +81,8 @@ function Chat() {
     };
 
     const sendMessage = (message) => {
-        setInputText(message); 
-        handleSend(); 
+        setInputText(message);
+        handleSend();
     };
 
     return (
@@ -85,6 +91,9 @@ function Chat() {
                 <div className="card-body">
                     <div className="text-center mb-3">
                         <button className="btn btn-info" onClick={loadHistory}>Load History</button>
+                        {isLoading && <div className="spinner-border text-primary" role="status">
+                        <span className="sr-only"></span>
+                    </div>}
                     </div>
                     <div className="chat-box">
                         {messages.map((msg, index) => (
@@ -92,7 +101,9 @@ function Chat() {
                                 {msg.text}
                             </div>
                         ))}
+                        
                     </div>
+                    
                 </div>
                 <div className="card-footer chat-input">
                     <input
@@ -106,10 +117,12 @@ function Chat() {
                     <button
                         className="btn btn-primary"
                         onClick={handleSend}
+                        disabled={isLoading}
                     >
                         Send
                     </button>
-                    <button className="btn btn-success ml-2" onClick={suggestActivity}>Do Activities</button>
+              
+                    <button className="btn btn-success ml-2" onClick={suggestActivity} disabled={isLoading}>Do Activities</button>
 
                 </div>
             </div>
