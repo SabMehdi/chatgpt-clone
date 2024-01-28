@@ -28,7 +28,6 @@ function Register() {
             const data = await response.json();
 
             if (response.status === 201) {
-                console.log('Registration successful:', data);
                 setSuccessMessage('Registration successful. You can now log in.');
  
                 localStorage.setItem('username', username);
@@ -39,7 +38,7 @@ function Register() {
                     isAuthenticated: true,
                     username: username,
                 });
-                navigate('/');
+                navigate('/chat');
             } else {
                 setErrorMessage(data.message || 'Registration failed');
             }

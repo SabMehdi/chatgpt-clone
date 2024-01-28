@@ -12,7 +12,6 @@ router.post('/chat',requireAuth, async (req, res) => {
     const { message: userMessage, userId } = req.body;
 
     try {
-        console.log('Sending request to OpenAI API...', userMessage);
 
         const response = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
@@ -25,7 +24,6 @@ router.post('/chat',requireAuth, async (req, res) => {
             stream: false
         });
 
-        console.log("OpenAI API Response:", response);
 
         if (response && response.choices && response.choices.length > 0 && response.choices[0].message) {
             const aiResponse = response.choices[0].message.content;

@@ -26,7 +26,6 @@ function Login() {
             const data = await response.json();
 
             if (response.status === 200) {
-                console.log('Login successful:', data);
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('username', username);
                 localStorage.setItem('userId', data.userId);
@@ -34,7 +33,7 @@ function Login() {
                     isAuthenticated: true,
                     username: username,
                 });
-                navigate('/');
+                navigate('/chat');
             } else {
                 setErrorMessage(data.message || 'Login failed');
             }
