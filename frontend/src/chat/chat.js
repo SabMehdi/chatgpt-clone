@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Chat.css';
@@ -10,6 +10,15 @@ function Chat() {
     const token = localStorage.getItem('token');
     const [isLoading, setIsLoading] = useState(false);
 
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
     const loadHistory = () => {
         axios.get(`http://localhost:${port}/api/chat/history/${userId}`, {
             headers: { 'Authorization': `Bearer ${token}` },
@@ -23,8 +32,9 @@ function Chat() {
             .catch(error => console.error('Error fetching chat history:', error));
     };
     const handleSend = async () => {
+        setIsLoading(true);
         if (inputText !== "") {
-            setIsLoading(true);
+
             const userMessage = inputText;
             setMessages(messages => [...messages, { text: userMessage, sender: 'user' }]);
             setInputText("");
@@ -39,8 +49,9 @@ function Chat() {
             } catch (error) {
                 console.error('Error sending message:', error);
             }
-            setIsLoading(false);
+
         }
+        setIsLoading(false);
     };
 
     const suggestActivity = async () => {
@@ -50,16 +61,23 @@ function Chat() {
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
                 const weatherData = await fetchWeatherData(latitude, longitude);
-                const Message = `What can I do in ${weatherData.name}, ${weatherData.country} with ${weatherData.weather} condition, ${weatherData.temperature} Degree Celsius, at ${weatherData.time}?`;
-                sendMessage(Message);
+                if (weatherData) {
+                    const message = `What can I do in ${weatherData.name}, ${weatherData.country} with ${weatherData.weather} condition, ${weatherData.temperature} Degree Celsius, at ${weatherData.time}?`;
+                    setInputText(message);
+                } else {
+                    console.error('Error fetching weather data');
+                }
+                setIsLoading(false);
             }, (error) => {
                 console.error('Error getting location:', error);
+                setIsLoading(false);
             });
         } else {
             console.log("Geolocation is not supported by this browser.");
+            setIsLoading(false); 
         }
-        setIsLoading(false);
     };
+
 
     const fetchWeatherData = async (latitude, longitude) => {
         const apiKey = 'a164573a9bee41d9ab005932242801';
@@ -80,52 +98,49 @@ function Chat() {
         }
     };
 
-    const sendMessage = (message) => {
-        setInputText(message);
-        handleSend();
-    };
+
 
     return (
         <div className="chat-container">
-            <div className="card">
-                <div className="card-body">
-                    <div className="text-center mb-3">
-                        <button className="btn btn-info" onClick={loadHistory}>Load History</button>
-                        {isLoading && <div className="spinner-border text-primary" role="status">
-                        <span className="sr-only"></span>
-                    </div>}
-                    </div>
-                    <div className="chat-box">
-                        {messages.map((msg, index) => (
-                            <div key={index} className={`chat-message ${msg.sender === 'user' ? 'user' : 'ai'}`}>
-                                {msg.text}
-                            </div>
-                        ))}
-                        
-                    </div>
-                    
-                </div>
-                <div className="card-footer chat-input">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Type a message..."
-                        value={inputText}
-                        onChange={(e) => setInputText(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    />
-                    <button
-                        className="btn btn-primary"
-                        onClick={handleSend}
-                        disabled={isLoading}
-                    >
-                        Send
-                    </button>
-              
-                    <button className="btn btn-success ml-2" onClick={suggestActivity} disabled={isLoading}>Do Activities</button>
 
-                </div>
+
+            <div className="text-center mb-3">
+                <button className="btn btn-info mt-3" onClick={loadHistory}>Load History</button>
+                {isLoading && <div className="spinner-border text-primary" role="status">
+                    <span className="sr-only"></span>
+                </div>}
             </div>
+            <div className="chat-box">
+                {messages.map((msg, index) => (
+                    <div key={index} className={`chat-message ${msg.sender === 'user' ? 'user' : 'ai'}`}>
+                        {msg.text}
+                    </div>
+                ))}
+                <div ref={messagesEndRef} />
+            </div>
+
+
+            <div className=" chat-input">
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Type a message..."
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                />
+                <button
+                    className="btn btn-primary"
+                    onClick={handleSend}
+                    disabled={isLoading}
+                >
+                    Send
+                </button>
+
+                <button className="btn btn-success ml-2" onClick={suggestActivity} disabled={isLoading}>Do Activities</button>
+
+            </div>
+
         </div>
     );
 }
