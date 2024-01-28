@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth } from './AuthContext'; // Import useAuth
-
+import './Login.css';
 function Register() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -50,13 +50,13 @@ function Register() {
     };
 
     return (
-        <div className="container">
+        <div className="login-container">
             <h2>Register</h2>
             {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
             {successMessage && <div className="alert alert-success">{successMessage}</div>}
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label htmlFor="username" className="form-label">Username</label>
+                    <label htmlFor="username" className="login-form-label">Username</label>
                     <input
                         type="text"
                         className="form-control"
@@ -66,7 +66,7 @@ function Register() {
                     />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Password</label>
+                    <label htmlFor="password" className="login-form-label">Password</label>
                     <input
                         type="password"
                         className="form-control"
@@ -75,7 +75,7 @@ function Register() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">Register</button>
+                <button type="submit" className="btn login-form-button">Register</button>
             </form>
         </div>
     );
