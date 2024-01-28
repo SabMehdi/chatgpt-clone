@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/', (req, res) => {
-  res.send('GPT-Gate Backend is runnifffng');
+  res.send('The server is running !');
 });
 
 app.listen(PORT, () => {
