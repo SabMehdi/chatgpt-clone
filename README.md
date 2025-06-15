@@ -1,5 +1,5 @@
 
-# Keiken Chatgpt clone
+# Chatgpt clone
 
 Ce document fournit des instructions sur comment exécuter l'application Keiken sur votre machine en utilisant Docker.
 
