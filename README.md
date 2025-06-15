@@ -16,7 +16,7 @@ Assurez-vous que Docker est en cours d'exécution sur votre machine.
 #### Cloner le dépôt:
 Clonez le dépôt Git de l'application Keiken sur votre machine en utilisant la commande suivante :
 ```bash
- git clone https://github.com/SabMehdi/keiken.git
+ git clone https://github.com/SabMehdi/chatgpt-clone.git
 ```
 #### Ajouter la clé API OpenAI:
 Ouvrez le fichier \backend\\.env et ajouter la clé fournie.
